@@ -1,6 +1,8 @@
 import sqlite3
-from pathlib import Path
 from collections import defaultdict
+from math import log
+from pathlib import Path
+
 from document_procesor import DocumentProcessor
 
 
@@ -15,8 +17,21 @@ class Indexer():
             self.cur = con.cursor()
         return self.cur
 
-    def setup(self):
-        pass
+    def index(self, doc: str, content: str) -> None:
+        self._documents[doc] = content
+        words = normalize_string(content).split(" ")
+        for word in words:
+            self._index[word][doc] += 1
+
+    def bulk_index(self, documents: list[tuple[str, str]]):
+        for doc, content in documents:
+            self.index(doc, content)
+
+
+    def get_docs(self, keyword: str) -> dict[str, int]:
+        keyword = normalize_string(keyword)
+        return self._index[keyword]
+
 
 if __name__ == "__main__":
     docs = Path("../data/Sherlock_Holmes/").glob("*.txt")

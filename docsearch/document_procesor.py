@@ -1,5 +1,13 @@
 from pathlib import Path
 from typing import Union
+import string
+
+
+def normalize_string(input_string: str) -> str:
+    translation_table = str.maketrans(string.punctuation, ' ' * len(string.punctuation))
+    string_without_punc = input_string.translate(translation_table)
+    string_without_double_spaces = ' '.join(string_without_punc.split())
+    return string_without_double_spaces.lower()
 
 class DocumentProcessor():
 
